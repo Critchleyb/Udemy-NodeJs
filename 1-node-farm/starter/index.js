@@ -36,7 +36,6 @@ fs.readFile('./txt/start.txt', 'utf-8', (error, data1) => {
 
 //HTTP Server
 
-
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
 const dataObj = JSON.parse(data);
 
@@ -46,41 +45,41 @@ const templateCard = fs.readFileSync(`${__dirname}/templates/template-card.html`
 const templateProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8');
 
 //USING NPM Slugify
-const slugs = dataObj.map(el => slugify(el.productName, { lower: true }));
+const slugs = dataObj.map((el) => slugify(el.productName, { lower: true }));
 console.log(slugs);
 
-const server = http.createServer((req,res) => {
-    const { query, pathname } = url.parse(req.url, true);
-    switch(pathname) {
-        case '/':
-        case '/overview':
-            const cardsHtml = dataObj.map(el => replaceTemplate(templateCard, el)).join('');
-            const overviewHtml = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml);
-            res.writeHead(200, {
-                'content-type': 'text/html',
-            });
-            res.end(overviewHtml);
-            break;
-        case '/product':
-            const product = dataObj[query.id];
-            const productHtml = replaceTemplate(templateProduct, product);
-            res.writeHead(200, {
-                'content-type': 'text/html',
-            });
-            res.end(productHtml);
-            break;
-        case '/api':
-            res.end(data);
-            break;
-        default:
-            res.writeHead(404, {
-                'content-type': 'text/html',
-                'message': 'PAGE_DOES_NOT_EXIST'
-            });
-            res.end('<h1>404 Page not found!</h1>');
-    }
+const server = http.createServer((req, res) => {
+  const { query, pathname } = url.parse(req.url, true);
+  switch (pathname) {
+    case '/':
+    case '/overview':
+      const cardsHtml = dataObj.map((el) => replaceTemplate(templateCard, el)).join('');
+      const overviewHtml = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml);
+      res.writeHead(200, {
+        'content-type': 'text/html',
+      });
+      res.end(overviewHtml);
+      break;
+    case '/product':
+      const product = dataObj[query.id];
+      const productHtml = replaceTemplate(templateProduct, product);
+      res.writeHead(200, {
+        'content-type': 'text/html',
+      });
+      res.end(productHtml);
+      break;
+    case '/api':
+      res.end(data);
+      break;
+    default:
+      res.writeHead(404, {
+        'content-type': 'text/html',
+        message: 'PAGE_DOES_NOT_EXIST',
+      });
+      res.end('<h1>404 Page not found!</h1>');
+  }
 });
 
-server.listen(8000,'127.0.0.1', () => {
-    console.log('Listening to rquests on port 8000');
+server.listen(8000, '127.0.0.1', () => {
+  console.log('Listening to rquests on port 8000');
 });
