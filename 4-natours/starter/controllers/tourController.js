@@ -11,10 +11,9 @@ exports.checkID = (req, res, next, val) => {
             status: 'fail',
             message: 'Invalid ID',
         });
-    } else {
-        req.tourIndex = tourIndex;
-        next();
     }
+    req.tourIndex = tourIndex;
+    next();
 };
 
 exports.checkBody = (req, res, next) => {
@@ -51,11 +50,22 @@ exports.getTour = (req, res) => {
 exports.createTour = (req, res) => {
     //   console.log(req.body);
     const newId = tours[tours.length - 1].id + 1;
-    const newTour = Object.assign({ id: newId }, req.body);
+    const newTour = {
+        id: newId,
+        ...req.body,
+    };
+
+    // Object.assign({ id: newId }, req.body);
 
     tours.push(newTour);
 
     fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
+        if (err) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error writing file',
+            });
+        }
         res.status(201).json({
             status: 'success',
             data: {
@@ -72,6 +82,12 @@ exports.patchTour = (req, res) => {
     };
     tours[req.tourIndex] = updatedTour;
     fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
+        if (err) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error writing file',
+            });
+        }
         res.status(201).json({
             status: 'success',
             data: {
