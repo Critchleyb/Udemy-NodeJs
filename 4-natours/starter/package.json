@@ -5,7 +5,9 @@
     "main": "app.js",
     "scripts": {
         "start": "nodemon server.js",
-        "start:prod": "SET NODE_ENV=production&&nodemon server.js"
+        "start:prod": "SET NODE_ENV=production&&nodemon server.js",
+        "emptyTours": "node ./dev-data/data/importData.js --delete",
+        "ToursDevData": "node ./dev-data/data/importData.js --import"
     },
     "author": "Ben Critchley",
     "license": "ISC",
